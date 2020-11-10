@@ -63,10 +63,8 @@ user function mvfilesrv()
 
     freeobj(oDialog)
     freeobj(oRadio)
-    freeobj(oBitmapDestiny)
     freeobj(oInputDestiny)
     freeobj(oBtnDirDestiny)
-    freeobj(oBitmapOrigin)
     freeobj(oInputOrigin)
     freeobj(oBtnDirOrigin)
     freeobj(oLabelListFiles)
@@ -157,8 +155,7 @@ static function send(cDirDestiny, aFiles, cFunction, aStatusFiles)
         msgstop(cErrors, TITLE_MODAL)
     endif 
 
-    aeval(aFiles, {|x| aadd(aStatusFiles, {x, &(cFunction)(x, cDirDestiny,, .f.)}) })
-
+    msgrun("Transferindo arquivos...", TITLE_MODAL, {|| aeval(aFiles, {|x| aadd(aStatusFiles, {x, &(cFunction)(x, cDirDestiny,, .f.)}) }) })
 return lValid
 
 
