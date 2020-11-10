@@ -1,43 +1,43 @@
 # tlpp-copy-and-send-files-server
 
-Tranferir arquivos entre client e server (ROOTPATH). Desenvolvida na linguagem TL++ (Linguagem propriet·ria da TOTVS)
+Transferir arquivos entre client e server (ROOTPATH). Desenvolvida na linguagem TL++ (Linguagem propriet√°ria da TOTVS)
 
 <br />
 
-1. [DefiniÁ„o](#DefiniÁ„o)
-1. [Exemplo de execuÁ„o](#Exemplo-de-execuÁ„o)
-1. [ObservaÁıes](#ObservaÁıes)
+1. [Defini√ß√£o](#Defini√ß√£o)
+1. [Exemplo de execu√ß√£o](#Exemplo-de-execu√ß√£o)
+1. [Observa√ß√µes](#Observa√ß√µes)
 
 <br />
 
-## DefiniÁ„o
+## Defini√ß√£o
 
-Rotina para realizar a transferencia de arquivos entre o cliente que est· executando o 'smartclient' e o servidor, dentro da ROOTPATH.
+Rotina para realizar a transferencia de arquivos entre o cliente que est√° executando o 'smartclient' e o servidor, dentro da ROOTPATH.
 
 <br />
 
-## Exemplo de execuÁ„o
-Ao abrir o programa a seguinte tela ser· apresentada.
+## Exemplo de execu√ß√£o
+Ao abrir o programa a seguinte tela ser√° apresentada.
 <br />
 ![](assets/tela_inicial.png)
 
 <br />
 
-Para buscar o diretÛrio de origem o programa abrir· uma janela para selecionar os arquivos.
+Para buscar o diret√≥rio de origem o programa abrir√° uma janela para selecionar os arquivos.
 ![](assets/buscar_origem_e_arquivos.gif)
 
 <br />
 
-Para buscar o diretÛrio de destino dos arquivos clique no bot„o 'Salvar em'.
+Para buscar o diret√≥rio de destino dos arquivos clique no bot√£o 'Salvar em'.
 ![](assets/buscar_destino.gif)
 
 <br />
 
-ApÛs selecionar os diretÛrios e arquivos clique em 'Enviar' para realizar a transferencia.
+Ap√≥s selecionar os diret√≥rios e arquivos clique em 'Enviar' para realizar a transferencia.
 ![](assets/enviando_arquivos.gif)
 
 <br />
 
-## ObservaÁıes
-Ao mudar o fluxo de transferencia, mudando entre 'Cliente p/ Servidor' e 'Servidor p/ Cliente' os dados preenchidos ser„o apagados.
+## Observa√ß√µes
+Ao mudar o fluxo de transferencia, mudando entre 'Cliente p/ Servidor' e 'Servidor p/ Cliente' os dados preenchidos ser√£o apagados.
 ![](assets/mudar_fluxo_transferencia.gif)
