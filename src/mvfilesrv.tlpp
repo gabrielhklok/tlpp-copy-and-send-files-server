@@ -1,0 +1,217 @@
+#include "protheus.ch"
+
+#define TITLE_MODAL ""
+#define CRLF chr(13) + chr(10)
+
+#define PATH_SERVER GETF_RETDIRECTORY
+#define PATH_CLIENT GETF_LOCALHARD + GETF_RETDIRECTORY
+
+/*/{Protheus.doc} mvfilesrv
+Rotina destinada a realizar a transferencia de arquivos entre o cliente e o servidor.
+
+@author Gabriel H. Klok
+
+@type user function
+@since 09/11/2020
+@version 1.0
+/*/
+user function mvfilesrv()
+    local oDialog
+    local oRadio
+    local oInputDestiny
+    local oBtnDirDestiny
+    local oInputOrigin
+    local oBtnDirOrigin
+    local oLabelListFiles
+    local oListFiles
+    local oBtnCancel
+    local oBtnSend
+    local oTFont := tfont():new('Arial',, -12,, .f.)
+
+    local lClean := .t.
+    local lPixel := .t.
+    local nRadio := 1
+    local aStatusFiles := {}
+    local aRadios := {"Cliente p/ Servidor", "Servidor p/ Cliente"}
+    local cDirDestiny := space(240)
+    local cDirOrigin := space(240)
+
+    local bRadio := {|u| iif(pcount() == 0, nRadio, nRadio := u)}
+    local bRefresh := {|| cDirDestiny := "", cDirOrigin := "", aFiles := {}, oInputDestiny:refresh(), oInputOrigin:refresh(), oListFiles:setarray({}) }
+    local bDestiny := {|u| iif(pcount() == 0, cDirDestiny, cDirDestiny := u)}
+    local bOrigin := {|u| iif(pcount() == 0, cDirOrigin, cDirOrigin := u)}
+    local bDirDestiny := {|| cDirDestiny := getPath(nRadio, 1)}
+    local bDirOrigin := {|| cDirOrigin := getPath(nRadio, 2), oListFiles:setarray( getFiles(cDirOrigin) )}
+    local bSend := {|| iif( modalResponse( ! send(cDirDestiny, oListFiles:aItems, iif(nRadio = 1, "cpyt2s", "cpys2t"), @aStatusFiles), aStatusFiles, @lClean), oDialog:end(), iif(lClean, eval(bRefresh), nil)) }
+
+    oDialog := msdialog():new(0, 0, 385, 550, "Copiar arquivos...",,,,,,,,, lPixel)
+    oRadio := tradmenu():new(5, 60, aRadios, bRadio, oDialog,, bRefresh,,,,,, 200, 10,,,, lPixel, .t.)
+
+    oInputOrigin := tget():new(16, 5, bOrigin, oDialog, 220, 10,,,,, oTFont,,, lPixel,,,,,,, .f.,,, cDirOrigin,,,,,,, "Diretório de origem", 1, oTFont,,,, .t.)
+    oBtnDirOrigin := tbutton():new(22, 230, "Buscar", oDialog, bDirOrigin, 40, 13,, oTFont,, lPixel)
+
+    oInputDestiny := tget():new(36, 5, bDestiny, oDialog, 220, 10,,,,, oTFont,,, lPixel,,,,,,, .f.,,, cDirDestiny,,,,,,, "Diretório de destino", 1, oTFont,,,, .t.)
+    oBtnDirDestiny := tbutton():new(42, 230, "Salvar em", oDialog, bDirDestiny, 40, 13,, oTFont,, lPixel)
+
+    oLabelListFiles := tsay():new(60, 5, {|| "Arquivos selecionados:"}, oDialog,, oTFont,,,, lPixel,,, 70, 10)
+    oListFiles := tlistbox():new(70, 5,,, 265, 100,, oDialog,,,, lPixel,,, oTFont)
+    
+    oBtnCancel := tbutton():new(175, 4, "Cancelar", oDialog, {|| oDialog:end() }, 40, 13,, oTFont,, lPixel)
+    oBtnSend := tbutton():new(175, 230, "Enviar", oDialog, bSend, 40, 13,, oTFont,, lPixel)
+
+    oDialog:activate()
+
+    freeobj(oDialog)
+    freeobj(oRadio)
+    freeobj(oBitmapDestiny)
+    freeobj(oInputDestiny)
+    freeobj(oBtnDirDestiny)
+    freeobj(oBitmapOrigin)
+    freeobj(oInputOrigin)
+    freeobj(oBtnDirOrigin)
+    freeobj(oLabelListFiles)
+    freeobj(oListFiles)
+    freeobj(oBtnCancel)
+    freeobj(oBtnSend)
+    freeobj(oTFont)
+return 
+
+
+/*/{Protheus.doc} getPath
+Função responsável por capturar diretórios.
+
+@type static function
+@since 09/11/2020
+@version 1.0
+
+@param nOrigin, numeric, Indica se origem da transferencia é o cliente ou o servidor.
+@param nOpc, numeric, Indice se é a seleção de diretorio de origem ou destino.
+
+@return cPath, caracter, Caminho até o diretório selecionado.
+/*/
+static function getPath(nOrigin, nOpc)
+    local cPath := ""
+    cPath := cgetfile("Arquivos *|*.*", 'Selecione o diretorio para salvar o resultado...', 1, plsmudsis('\'), .t., iif(nOrigin = nOpc, PATH_SERVER, PATH_CLIENT), .t., .t.)
+return cPath
+
+
+/*/{Protheus.doc} getFiles
+Função responsável por pegar selecionar os arquivos desejados.
+
+@type static function
+@since 09/11/2020
+@version 1.0
+
+@param cPath, caracter, Caminho até o diretório aonde os arquivos seram selecionados.
+
+@return aFiles, array, Array com os arquivos selecionados.
+/*/
+static function getFiles(cPath)
+    local aMatCol := {}
+    local aFiles := {}
+    local aFilesTmp
+
+    aadd(aMatCol, {"Arquivo", "@!", 100, .f.})
+    aadd(aMatCol, {"Tamanho", "@!", 30, .f.})
+    aadd(aMatCol, {"Data", "@!", 30, .f.})
+    aadd(aMatCol, {"Hora", "@!", 30, .f.})
+
+    aFilesTmp := directory(cPath + "*.*",, nil, .f.)
+    aeval(aFilesTmp, {|x| x[2] := alltrim(str(x[2])), x[3] := dtoc(x[3]), x[5] := .f. })
+
+    if PLSSELOPT("Selecione o(s) arquivos para enviar...", "Marca e Desmarca todos", aFilesTmp, aMatCol,,.t.,.t.,.f.)
+        aeval(aFilesTmp, {|x| iif(x[5], aadd(aFiles, cPath + x[1]), ) })
+    endif
+return aFiles
+
+
+/*/{Protheus.doc} send
+Função responsável por validar e enviar os arquivos.
+
+@type static funtion
+@since 09/11/2020
+@version 1.0
+
+@param cDirDestiny, caracter, Caminho do diretório de destino.
+@param aFiles, array, Array com os arquivos a serem transferidos.
+@param cFunction, caracter, Função que será executada para transferir.
+@param aStatusFiles, array, Array com o status dos arquivos enviados.
+
+@return lValid, logical, Indica se foi encontra algum erro no processo.
+/*/
+static function send(cDirDestiny, aFiles, cFunction, aStatusFiles)
+    local lValid := .t.
+    local cErrors := "Problemas identificados:" + replicate(CRLF, 2)
+
+    if empty(cDirDestiny) .or. ! existdir(cDirDestiny)
+        cErrors += "  - Diretório de destino não existe e/ou não informado." + CRLF
+        lValid := .f.
+    endif 
+
+    if empty(aFiles)
+        cErrors += "  - Não foram selecionados arquivos para transferência." + CRLF
+        lValid := .f.
+    endif 
+
+    if ! lValid
+        msgstop(cErrors, TITLE_MODAL)
+    endif 
+
+    aeval(aFiles, {|x| aadd(aStatusFiles, {x, &(cFunction)(x, cDirDestiny,, .f.)}) })
+
+return lValid
+
+
+/*/{Protheus.doc} modalResponse
+Função para mostrar telas de sucesso e erros.
+
+@type static function
+@since 09/11/2020
+@version 1.0
+
+@param lError, logical, Indica se aconteceu algum erro.
+@param aStatusFiles, array, Array com o status dos arquivos enviados.
+@param lClean, logical, Indica se deve ou não limpar os dados da tela.
+
+@return lClose, logical, Indica se deve ou não fechar a rotina.
+/*/
+static function modalResponse(lError, aStatusFiles, lClean)
+    local lClose := .t.
+
+    if lError
+        lClose := ! msgyesno("Deseja corrigir?", TITLE_MODAL)
+        lClean := iif(lClose, lClean, .f.)
+    else
+        msginfo("Arquivos enviados com SUCESSO!", TITLE_MODAL)
+        if existErrorSend(aStatusFiles)
+            lClose := ! msgyesno("Deseja enviar mais?")
+        else 
+            lClose := ! msgyesno("Deseja tentar novamente?")
+            lClean := iif(lClose, lClean, .f.)
+        endif 
+    endif 
+return lClose
+
+
+/*/{Protheus.doc} existErrorSend
+Função responsável por verificar se algum arquivos não pode ser enviado.
+
+@type static function
+@since 09/11/2020
+@version 1.0
+
+@param aStatusFiles, array, Array com o status dos arquivos enviados.
+
+@return lValid, logical, Indica se houve ou não erros no envio.
+/*/
+static function existErrorSend(aStatusFiles)
+    local lValid := .t.
+    local cErrors := ""
+
+    aeval(aStatusFiles, {|x| iif(x[2], nil, cErrors += x[1] + CRLF)})
+
+    if ! empty(cErrors)
+        msgstop("Arquivos não enviados: " + replicate(CRLF, 2) + cErrors, TITLE_MODAL)
+        lValid := .f.
+    endif
+return lValid
