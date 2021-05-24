@@ -1,10 +1,10 @@
-#include "protheus.ch"
+#INCLUDE "protheus.ch"
 
-#define TITLE_MODAL ""
-#define CRLF chr(13) + chr(10)
+#DEFINE TITLE_MODAL ""
+#DEFINE CRLF Chr(13) + Chr(10)
 
-#define PATH_SERVER GETF_RETDIRECTORY
-#define PATH_CLIENT GETF_LOCALHARD + GETF_RETDIRECTORY
+#DEFINE PATH_SERVER GETF_RETDIRECTORY
+#DEFINE PATH_CLIENT GETF_LOCALHARD + GETF_RETDIRECTORY
 
 /*/{Protheus.doc} mvfilesrv
 Rotina destinada a realizar a transferencia de arquivos entre o cliente e o servidor.
@@ -15,64 +15,64 @@ Rotina destinada a realizar a transferencia de arquivos entre o cliente e o serv
 @since 09/11/2020
 @version 1.0
 /*/
-user function mvfilesrv()
-    local oDialog
-    local oRadio
-    local oInputDestiny
-    local oBtnDirDestiny
-    local oInputOrigin
-    local oBtnDirOrigin
-    local oLabelListFiles
-    local oListFiles
-    local oBtnCancel
-    local oBtnSend
-    local oTFont := tfont():new('Arial',, -12,, .f.)
+User Function MVFILESRV()
+    Local oDialog
+    Local oRadio
+    Local oInputDestiny
+    Local oBtnDirDestiny
+    Local oInputOrigin
+    Local oBtnDirOrigin
+    Local oLabelListFiles
+    Local oListFiles
+    Local oBtnCancel
+    Local oBtnSend
+    Local oTFont := TFont():New('Arial',, -12,, .f.)
 
-    local lClean := .t.
-    local lPixel := .t.
-    local nRadio := 1
-    local aStatusFiles := {}
-    local aRadios := {"Cliente p/ Servidor", "Servidor p/ Cliente"}
-    local cDirDestiny := space(240)
-    local cDirOrigin := space(240)
+    Local lClean := .t.
+    Local lPixel := .t.
+    Local nRadio := 1
+    Local aStatusFiles := {}
+    Local aRadios := {"Cliente p/ Servidor", "Servidor p/ Cliente"}
+    Local cDirDestiny := Space(240)
+    Local cDirOrigin := Space(240)
 
-    local bRadio := {|u| iif(pcount() == 0, nRadio, nRadio := u)}
-    local bRefresh := {|| cDirDestiny := "", cDirOrigin := "", aFiles := {}, oInputDestiny:refresh(), oInputOrigin:refresh(), oListFiles:setarray({}) }
-    local bDestiny := {|u| iif(pcount() == 0, cDirDestiny, cDirDestiny := u)}
-    local bOrigin := {|u| iif(pcount() == 0, cDirOrigin, cDirOrigin := u)}
-    local bDirDestiny := {|| cDirDestiny := getPath(nRadio, 1)}
-    local bDirOrigin := {|| cDirOrigin := getPath(nRadio, 2), oListFiles:setarray( getFiles(cDirOrigin) )}
-    local bSend := {|| iif( modalResponse( ! send(cDirDestiny, oListFiles:aItems, iif(nRadio = 1, "cpyt2s", "cpys2t"), @aStatusFiles), aStatusFiles, @lClean), oDialog:end(), iif(lClean, eval(bRefresh), nil)) }
+    Local bRadio := {|u| IIf(PCount()() == 0, nRadio, nRadio := u)}
+    Local bRefresh := {|| cDirDestiny := "", cDirOrigin := "", aFiles := {}, oInputDestiny:Refresh(), oInputOrigin:Refresh(), oListFiles:SetArray({}) }
+    Local bDestiny := {|u| IIf(PCount()() == 0, cDirDestiny, cDirDestiny := u)}
+    Local bOrigin := {|u| IIf(PCount()() == 0, cDirOrigin, cDirOrigin := u)}
+    Local bDirDestiny := {|| cDirDestiny := getPath(nRadio, 1)}
+    Local bDirOrigin := {|| cDirOrigin := getPath(nRadio, 2), oListFiles:SetArray( getFiles(cDirOrigin) )}
+    Local bSend := {|| IIf( modalResponse( ! send(cDirDestiny, oListFiles:aItems, IIf(nRadio = 1, "cpyt2s", "cpys2t"), @aStatusFiles), aStatusFiles, @lClean), oDialog:End(), IIf(lClean, Eval(bRefresh), Nil)) }
 
-    oDialog := msdialog():new(0, 0, 385, 550, "Copiar arquivos...",,,,,,,,, lPixel)
-    oRadio := tradmenu():new(5, 60, aRadios, bRadio, oDialog,, bRefresh,,,,,, 200, 10,,,, lPixel, .t.)
+    oDialog := MsDialog():New(0, 0, 385, 550, "Copiar arquivos...",,,,,,,,, lPixel)
+    oRadio := TRadMenu():New(5, 60, aRadios, bRadio, oDialog,, bRefresh,,,,,, 200, 10,,,, lPixel, .t.)
 
-    oInputOrigin := tget():new(16, 5, bOrigin, oDialog, 220, 10,,,,, oTFont,,, lPixel,,,,,,, .f.,,, cDirOrigin,,,,,,, "Diretório de origem", 1, oTFont,,,, .t.)
-    oBtnDirOrigin := tbutton():new(22, 230, "Buscar", oDialog, bDirOrigin, 40, 13,, oTFont,, lPixel)
+    oInputOrigin := TGet():New(16, 5, bOrigin, oDialog, 220, 10,,,,, oTFont,,, lPixel,,,,,,, .f.,,, cDirOrigin,,,,,,, "Diretório de origem", 1, oTFont,,,, .t.)
+    oBtnDirOrigin := TButton():New(22, 230, "Buscar", oDialog, bDirOrigin, 40, 13,, oTFont,, lPixel)
 
-    oInputDestiny := tget():new(36, 5, bDestiny, oDialog, 220, 10,,,,, oTFont,,, lPixel,,,,,,, .f.,,, cDirDestiny,,,,,,, "Diretório de destino", 1, oTFont,,,, .t.)
-    oBtnDirDestiny := tbutton():new(42, 230, "Salvar em", oDialog, bDirDestiny, 40, 13,, oTFont,, lPixel)
+    oInputDestiny := TGet():New(36, 5, bDestiny, oDialog, 220, 10,,,,, oTFont,,, lPixel,,,,,,, .f.,,, cDirDestiny,,,,,,, "Diretório de destino", 1, oTFont,,,, .t.)
+    oBtnDirDestiny := TButton():New(42, 230, "Salvar em", oDialog, bDirDestiny, 40, 13,, oTFont,, lPixel)
 
-    oLabelListFiles := tsay():new(60, 5, {|| "Arquivos selecionados:"}, oDialog,, oTFont,,,, lPixel,,, 70, 10)
-    oListFiles := tlistbox():new(70, 5,,, 265, 100,, oDialog,,,, lPixel,,, oTFont)
+    oLabelListFiles := TSay():New(60, 5, {|| "Arquivos selecionados:"}, oDialog,, oTFont,,,, lPixel,,, 70, 10)
+    oListFiles := TListBox():New(70, 5,,, 265, 100,, oDialog,,,, lPixel,,, oTFont)
     
-    oBtnCancel := tbutton():new(175, 4, "Cancelar", oDialog, {|| oDialog:end() }, 40, 13,, oTFont,, lPixel)
-    oBtnSend := tbutton():new(175, 230, "Enviar", oDialog, bSend, 40, 13,, oTFont,, lPixel)
+    oBtnCancel := TButton():New(175, 4, "Cancelar", oDialog, {|| oDialog:End() }, 40, 13,, oTFont,, lPixel)
+    oBtnSend := TButton():New(175, 230, "Enviar", oDialog, bSend, 40, 13,, oTFont,, lPixel)
 
-    oDialog:activate()
+    oDialog:Activate()
 
-    freeobj(oDialog)
-    freeobj(oRadio)
-    freeobj(oInputDestiny)
-    freeobj(oBtnDirDestiny)
-    freeobj(oInputOrigin)
-    freeobj(oBtnDirOrigin)
-    freeobj(oLabelListFiles)
-    freeobj(oListFiles)
-    freeobj(oBtnCancel)
-    freeobj(oBtnSend)
-    freeobj(oTFont)
-return 
+    FreeObj(oDialog)
+    FreeObj(oRadio)
+    FreeObj(oInputDestiny)
+    FreeObj(oBtnDirDestiny)
+    FreeObj(oInputOrigin)
+    FreeObj(oBtnDirOrigin)
+    FreeObj(oLabelListFiles)
+    FreeObj(oListFiles)
+    FreeObj(oBtnCancel)
+    FreeObj(oBtnSend)
+    FreeObj(oTFont)
+Return 
 
 
 /*/{Protheus.doc} getPath
@@ -87,10 +87,10 @@ Função responsável por capturar diretórios.
 
 @return cPath, caracter, Caminho até o diretório selecionado.
 /*/
-static function getPath(nOrigin, nOpc)
-    local cPath := ""
-    cPath := cgetfile("Arquivos *|*.*", 'Selecione o diretorio para salvar o resultado...', 1, plsmudsis('\'), .t., iif(nOrigin = nOpc, PATH_SERVER, PATH_CLIENT), .t., .t.)
-return cPath
+Static Function getPath(nOrigin, nOpc)
+    Local cPath := ""
+    cPath := cGetFile("Arquivos *|*.*", 'Selecione o diretorio para salvar o resultado...', 1, PlsMudSis('\'), .t., IIf(nOrigin = nOpc, PATH_SERVER, PATH_CLIENT), .t., .t.)
+Return cPath
 
 
 /*/{Protheus.doc} getFiles
@@ -104,23 +104,23 @@ Função responsável por pegar selecionar os arquivos desejados.
 
 @return aFiles, array, Array com os arquivos selecionados.
 /*/
-static function getFiles(cPath)
-    local aMatCol := {}
-    local aFiles := {}
-    local aFilesTmp
+Static Function getFiles(cPath)
+    Local aMatCol := {}
+    Local aFiles := {}
+    Local aFilesTmp
 
-    aadd(aMatCol, {"Arquivo", "@!", 100, .f.})
-    aadd(aMatCol, {"Tamanho", "@!", 30, .f.})
-    aadd(aMatCol, {"Data", "@!", 30, .f.})
-    aadd(aMatCol, {"Hora", "@!", 30, .f.})
+    AAdd(aMatCol, {"Arquivo", "@!", 100, .f.})
+    AAdd(aMatCol, {"Tamanho", "@!", 30, .f.})
+    AAdd(aMatCol, {"Data", "@!", 30, .f.})
+    AAdd(aMatCol, {"Hora", "@!", 30, .f.})
 
-    aFilesTmp := directory(cPath + "*.*",, nil, .f.)
-    aeval(aFilesTmp, {|x| x[2] := alltrim(str(x[2])), x[3] := dtoc(x[3]), x[5] := .f. })
+    aFilesTmp := Directory(cPath + "*.*",, nil, .f.)
+    AEval(aFilesTmp, {|x| x[2] := AllTrim(Str(x[2])), x[3] := DtoC(x[3]), x[5] := .f. })
 
-    if PLSSELOPT("Selecione o(s) arquivos para enviar...", "Marca e Desmarca todos", aFilesTmp, aMatCol,,.t.,.t.,.f.)
-        aeval(aFilesTmp, {|x| iif(x[5], aadd(aFiles, cPath + x[1]), ) })
-    endif
-return aFiles
+    If PLSSELOPT("Selecione o(s) arquivos para enviar...", "Marca e Desmarca todos", aFilesTmp, aMatCol,,.t.,.t.,.f.)
+        AEval(aFilesTmp, {|x| IIf(x[5], AAdd(aFiles, cPath + x[1]), ) })
+    EndIf
+Return aFiles
 
 
 /*/{Protheus.doc} send
@@ -137,26 +137,26 @@ Função responsável por validar e enviar os arquivos.
 
 @return lValid, logical, Indica se foi encontra algum erro no processo.
 /*/
-static function send(cDirDestiny, aFiles, cFunction, aStatusFiles)
-    local lValid := .t.
-    local cErrors := "Problemas identificados:" + replicate(CRLF, 2)
+Static Function send(cDirDestiny, aFiles, cFunction, aStatusFiles)
+    Local lValid := .t.
+    Local cErrors := "Problemas identificados:" + replicate(CRLF, 2)
 
-    if empty(cDirDestiny) .or. ! existdir(cDirDestiny)
+    If Empty(cDirDestiny) .or. ! ExistDir(cDirDestiny)
         cErrors += "  - Diretório de destino não existe e/ou não informado." + CRLF
         lValid := .f.
-    endif 
+    EndIf 
 
-    if empty(aFiles)
+    If Empty(aFiles)
         cErrors += "  - Não foram selecionados arquivos para transferência." + CRLF
         lValid := .f.
-    endif 
+    EndIf 
 
-    if ! lValid
-        msgstop(cErrors, TITLE_MODAL)
-    endif 
+    If ! lValid
+        MsgStop(cErrors, TITLE_MODAL)
+    EndIf 
 
-    msgrun("Transferindo arquivos...", TITLE_MODAL, {|| aeval(aFiles, {|x| aadd(aStatusFiles, {x, &(cFunction)(x, cDirDestiny,, .f.)}) }) })
-return lValid
+    MsgRun("Transferindo arquivos...", TITLE_MODAL, {|| AEval(aFiles, {|x| AAdd(aStatusFiles, {x, &(cFunction)(x, cDirDestiny,, .f.)}) }) })
+Return lValid
 
 
 /*/{Protheus.doc} modalResponse
@@ -172,22 +172,22 @@ Função para mostrar telas de sucesso e erros.
 
 @return lClose, logical, Indica se deve ou não fechar a rotina.
 /*/
-static function modalResponse(lError, aStatusFiles, lClean)
-    local lClose := .t.
+Static Function modalResponse(lError, aStatusFiles, lClean)
+    Local lClose := .t.
 
-    if lError
-        lClose := ! msgyesno("Deseja corrigir?", TITLE_MODAL)
-        lClean := iif(lClose, lClean, .f.)
-    else
-        msginfo("Arquivos enviados com SUCESSO!", TITLE_MODAL)
-        if existErrorSend(aStatusFiles)
-            lClose := ! msgyesno("Deseja enviar mais?")
-        else 
-            lClose := ! msgyesno("Deseja tentar novamente?")
-            lClean := iif(lClose, lClean, .f.)
-        endif 
-    endif 
-return lClose
+    If lError
+        lClose := ! MsgYesNo("Deseja corrigir?", TITLE_MODAL)
+        lClean := IIf(lClose, lClean, .f.)
+    Else
+        MsgInfo("Arquivos enviados com SUCESSO!", TITLE_MODAL)
+        If existErrorSend(aStatusFiles)
+            lClose := ! MsgYesNo("Deseja enviar mais?")
+        Else 
+            lClose := ! MsgYesNo("Deseja tentar novamente?")
+            lClean := IIf(lClose, lClean, .f.)
+        EndIf 
+    EndIf 
+Return lClose
 
 
 /*/{Protheus.doc} existErrorSend
@@ -201,14 +201,14 @@ Função responsável por verificar se algum arquivos não pode ser enviado.
 
 @return lValid, logical, Indica se houve ou não erros no envio.
 /*/
-static function existErrorSend(aStatusFiles)
-    local lValid := .t.
-    local cErrors := ""
+Static Function existErrorSend(aStatusFiles)
+    Local lValid := .t.
+    Local cErrors := ""
 
-    aeval(aStatusFiles, {|x| iif(x[2], nil, cErrors += x[1] + CRLF)})
+    AEval(aStatusFiles, {|x| IIf(x[2], Nil, cErrors += x[1] + CRLF)})
 
-    if ! empty(cErrors)
-        msgstop("Arquivos não enviados: " + replicate(CRLF, 2) + cErrors, TITLE_MODAL)
+    If ! Empty(cErrors)
+        MsgStop("Arquivos não enviados: " + Replicate(CRLF, 2) + cErrors, TITLE_MODAL)
         lValid := .f.
-    endif
-return lValid
+    EndIf
+Return lValid
