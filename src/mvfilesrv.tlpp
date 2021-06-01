@@ -16,16 +16,17 @@ Rotina destinada a realizar a transferencia de arquivos entre o cliente e o serv
 @version 1.0
 /*/
 User Function MVFILESRV()
-    Local oDialog
-    Local oRadio
-    Local oInputDestiny
-    Local oBtnDirDestiny
-    Local oInputOrigin
-    Local oBtnDirOrigin
-    Local oLabelListFiles
-    Local oListFiles
-    Local oBtnCancel
-    Local oBtnSend
+    Local oDialog := Nil
+    Local oRadio := Nil
+    Local oInputDestiny := Nil
+    Local oBtnDirDestiny := Nil
+    Local oInputOrigin := Nil
+    Local oBtnDirOrigin := Nil
+    Local oLabelListFiles := Nil
+    Local oListFiles := Nil
+    Local oChkRemoveFiles := Nil
+    Local oBtnCancel := Nil
+    Local oBtnSend := Nil
     Local oTFont := TFont():New('Arial',, -12,, .f.)
 
     Local lClean := .t.
@@ -35,6 +36,7 @@ User Function MVFILESRV()
     Local aRadios := {"Cliente p/ Servidor", "Servidor p/ Cliente"}
     Local cDirDestiny := Space(240)
     Local cDirOrigin := Space(240)
+    Local lChkRemonveFile := .f.
 
     Local bRadio := {|u| IIf(PCount()() == 0, nRadio, nRadio := u)}
     Local bRefresh := {|| cDirDestiny := "", cDirOrigin := "", aFiles := {}, oInputDestiny:Refresh(), oInputOrigin:Refresh(), oListFiles:SetArray({}) }
@@ -42,9 +44,10 @@ User Function MVFILESRV()
     Local bOrigin := {|u| IIf(PCount()() == 0, cDirOrigin, cDirOrigin := u)}
     Local bDirDestiny := {|| cDirDestiny := getPath(nRadio, 1)}
     Local bDirOrigin := {|| cDirOrigin := getPath(nRadio, 2), oListFiles:SetArray( getFiles(cDirOrigin) )}
-    Local bSend := {|| IIf( modalResponse( ! send(cDirDestiny, oListFiles:aItems, IIf(nRadio = 1, "cpyt2s", "cpys2t"), @aStatusFiles), aStatusFiles, @lClean), oDialog:End(), IIf(lClean, Eval(bRefresh), Nil)) }
+    Local bSend := {|| IIf( modalResponse( ! send(cDirDestiny, oListFiles:aItems, IIf(nRadio = 1, "cpyt2s", "cpys2t"), @aStatusFiles), aStatusFiles, @lClean, lChkRemonveFile), oDialog:End(), IIf(lClean, Eval(bRefresh), Nil)) }
 
-    oDialog := MsDialog():New(0, 0, 385, 550, "Copiar arquivos...",,,,,,,,, lPixel)
+    oDialog := TDialog():New(,,,, "Copiar arquivos...",,,,,,,,, lPixel,,,, 550, 385)
+
     oRadio := TRadMenu():New(5, 60, aRadios, bRadio, oDialog,, bRefresh,,,,,, 200, 10,,,, lPixel, .t.)
 
     oInputOrigin := TGet():New(16, 5, bOrigin, oDialog, 220, 10,,,,, oTFont,,, lPixel,,,,,,, .f.,,, cDirOrigin,,,,,,, "Diretório de origem", 1, oTFont,,,, .t.)
@@ -56,10 +59,12 @@ User Function MVFILESRV()
     oLabelListFiles := TSay():New(60, 5, {|| "Arquivos selecionados:"}, oDialog,, oTFont,,,, lPixel,,, 70, 10)
     oListFiles := TListBox():New(70, 5,,, 265, 100,, oDialog,,,, lPixel,,, oTFont)
     
-    oBtnCancel := TButton():New(175, 4, "Cancelar", oDialog, {|| oDialog:End() }, 40, 13,, oTFont,, lPixel)
+    oChkRemoveFiles := TCheckBox():New(178, 5, "Apagar arquivo(s) na origem ?", {|u| IIf(PCount() > 0, lChkRemonveFile := u, lChkRemonveFile)}, oDialog, 100,,,, oTFont,,,,, lPixel)
+
+    oBtnCancel := TButton():New(175, 180, "Cancelar", oDialog, {|| oDialog:End() }, 40, 13,, oTFont,, lPixel)
     oBtnSend := TButton():New(175, 230, "Enviar", oDialog, bSend, 40, 13,, oTFont,, lPixel)
 
-    oDialog:Activate()
+    oDialog:Activate(,,, .t.)
 
     FreeObj(oDialog)
     FreeObj(oRadio)
@@ -172,18 +177,18 @@ Função para mostrar telas de sucesso e erros.
 
 @return lClose, logical, Indica se deve ou não fechar a rotina.
 /*/
-Static Function modalResponse(lError, aStatusFiles, lClean)
+Static Function modalResponse(lError, aStatusFiles, lClean, lRemoveFile)
     Local lClose := .t.
 
     If lError
         lClose := ! MsgYesNo("Deseja corrigir?", TITLE_MODAL)
         lClean := IIf(lClose, lClean, .f.)
     Else
-        MsgInfo("Arquivos enviados com SUCESSO!", TITLE_MODAL)
         If existErrorSend(aStatusFiles)
-            lClose := ! MsgYesNo("Deseja enviar mais?")
+            lClose := ! MsgYesNo("Arquivos enviados com SUCESSO!" + CRLF + "Deseja enviar mais?", TITLE_MODAL)
+            MsgRun("Removendo arquivos da origem...", TITLE_MODAL, {|| AEval(aStatusFiles, {|x| FErase(x[1]) })})
         Else 
-            lClose := ! MsgYesNo("Deseja tentar novamente?")
+            lClose := ! MsgYesNo("Deseja tentar novamente?", TITLE_MODAL)
             lClean := IIf(lClose, lClean, .f.)
         EndIf 
     EndIf 
