@@ -12,7 +12,7 @@ Transferir arquivos entre client e server (ROOTPATH). Desenvolvida na linguagem 
 
 ## Definição
 
-Rotina para realizar a transferencia de arquivos entre o cliente que está executando o 'smartclient' e o servidor, dentro da ROOTPATH.
+Rotina para realizar a transferencia de arquivos entre o cliente que está executando o 'smartclient' e o servidor, dentro da ROOTPATH. Posibilitando a exclusão dos arquivos da origem caso deseje.
 
 <br />
 
@@ -41,3 +41,4 @@ Após selecionar os diretórios e arquivos clique em 'Enviar' para realizar a tr
 ## Observações
 Ao mudar o fluxo de transferencia, mudando entre 'Cliente p/ Servidor' e 'Servidor p/ Cliente' os dados preenchidos serão apagados.
 ![](assets/mudar_fluxo_transferencia.gif)
+
