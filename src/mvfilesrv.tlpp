@@ -1,6 +1,7 @@
 #INCLUDE "protheus.ch"
+#INCLUDE "fileio.ch"
 
-#DEFINE TITLE_MODAL ""
+#DEFINE TITLE_MODAL "MvFileSrv"
 #DEFINE CRLF Chr(13) + Chr(10)
 
 #DEFINE PATH_SERVER GETF_RETDIRECTORY
@@ -10,8 +11,7 @@
 Rotina destinada a realizar a transferencia de arquivos entre o cliente e o servidor.
 
 @author Gabriel H. Klok
-
-@type user function
+@type function
 @since 09/11/2020
 @version 1.0
 /*/
@@ -83,14 +83,15 @@ Return
 /*/{Protheus.doc} getPath
 Função responsável por capturar diretórios.
 
-@type static function
+@author Gabriel H Klok
+@type function
 @since 09/11/2020
 @version 1.0
 
 @param nOrigin, numeric, Indica se origem da transferencia é o cliente ou o servidor.
 @param nOpc, numeric, Indice se é a seleção de diretorio de origem ou destino.
 
-@return cPath, caracter, Caminho até o diretório selecionado.
+@return character, Caminho até o diretório selecionado.
 /*/
 Static Function getPath(nOrigin, nOpc)
     Local cPath := ""
@@ -101,13 +102,14 @@ Return cPath
 /*/{Protheus.doc} getFiles
 Função responsável por pegar selecionar os arquivos desejados.
 
-@type static function
+@author Gabriel H Klok
+@type function
 @since 09/11/2020
 @version 1.0
 
-@param cPath, caracter, Caminho até o diretório aonde os arquivos seram selecionados.
+@param cPath, character, Caminho até o diretório aonde os arquivos seram selecionados.
 
-@return aFiles, array, Array com os arquivos selecionados.
+@return array, Array com os arquivos selecionados.
 /*/
 Static Function getFiles(cPath)
     Local aMatCol := {}
@@ -131,16 +133,17 @@ Return aFiles
 /*/{Protheus.doc} send
 Função responsável por validar e enviar os arquivos.
 
-@type static funtion
+@author Gabriel H Klok
+@type function
 @since 09/11/2020
 @version 1.0
 
-@param cDirDestiny, caracter, Caminho do diretório de destino.
+@param cDirDestiny, character, Caminho do diretório de destino.
 @param aFiles, array, Array com os arquivos a serem transferidos.
-@param cFunction, caracter, Função que será executada para transferir.
+@param cFunction, character, Função que será executada para transferir.
 @param aStatusFiles, array, Array com o status dos arquivos enviados.
 
-@return lValid, logical, Indica se foi encontra algum erro no processo.
+@return logical, Indica se foi encontra algum erro no processo.
 /*/
 Static Function send(cDirDestiny, aFiles, cFunction, aStatusFiles)
     Local lValid := .t.
@@ -167,7 +170,8 @@ Return lValid
 /*/{Protheus.doc} modalResponse
 Função para mostrar telas de sucesso e erros.
 
-@type static function
+@author Gabriel H Klok
+@type function
 @since 09/11/2020
 @version 1.0
 
@@ -175,7 +179,7 @@ Função para mostrar telas de sucesso e erros.
 @param aStatusFiles, array, Array com o status dos arquivos enviados.
 @param lClean, logical, Indica se deve ou não limpar os dados da tela.
 
-@return lClose, logical, Indica se deve ou não fechar a rotina.
+@return logical, Indica se deve ou não fechar a rotina.
 /*/
 Static Function modalResponse(lError, aStatusFiles, lClean, lRemoveFile)
     Local lClose := .t.
@@ -198,13 +202,14 @@ Return lClose
 /*/{Protheus.doc} existErrorSend
 Função responsável por verificar se algum arquivos não pode ser enviado.
 
-@type static function
+@author Gabriel H Klok
+@type function
 @since 09/11/2020
 @version 1.0
 
 @param aStatusFiles, array, Array com o status dos arquivos enviados.
 
-@return lValid, logical, Indica se houve ou não erros no envio.
+@return logical, Indica se houve ou não erros no envio.
 /*/
 Static Function existErrorSend(aStatusFiles)
     Local lValid := .t.
